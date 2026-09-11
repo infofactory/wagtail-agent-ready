@@ -1,0 +1,39 @@
+[lint]
+select = [
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "DJ",  # flake8-django
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "PIE", # flake8-pie
+    "PGH", # pygrep-hooks
+    "SIM", # flake8-simplify
+    "W",   # pycodestyle warnings
+    "UP",  # pyupgrade
+    "RUF100", # unused noqa
+]
+
+extend-ignore = [
+    "E501",  # no line length errors
+    "SIM103",  # if/return False; return True is clearer with earlier guards
+    "SIM108",  # ternary is less readable than a short if/else
+]
+
+fixable = ["C4", "E", "F", "I", "UP"]
+
+exclude = ["dist", "build", "venv", ".venv", ".tox", ".git", "__pycache__", "node_modules"]
+
+[lint.per-file-ignores]
+"tests/**.py" = ["DJ008"]
+"agent_ready/test/**.py" = ["DJ008"]
+"agent_ready/tests/**.py" = ["DJ008"]
+
+
+[lint.isort]
+known-first-party = ["agent_ready"]
+lines-between-types = 1
+lines-after-imports = 2
+
+[format]
+docstring-code-format = true

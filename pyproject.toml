@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "wagtail-agent-ready"
+dynamic = ["version"]
+description = "First-class markdown twins, optional authored `/llms.txt`"
+readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "infoFactory" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Framework :: Django :: 6.0",
+    "Framework :: Wagtail",
+    "Framework :: Wagtail :: 6",
+    "Framework :: Wagtail :: 7",
+    "Framework :: Wagtail :: 8",
+]
+dependencies = [
+    "Django>=5.2,<6.1",
+    "Wagtail>=6.3",
+]
+keywords = ["wagtail", "django", "cms", "markdown", "llms.txt", "agent"]
+
+[project.optional-dependencies]
+testing = [
+    "coverage>=7.0,<8.0",
+    "PyYAML>=6.0",
+    "wagtail-localize>=1.13",
+]
+yaml = [
+    "PyYAML>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/infofactory/wagtail-agent-ready"
+Source = "https://github.com/infofactory/wagtail-agent-ready"
+Issues = "https://github.com/infofactory/wagtail-agent-ready/issues"
+
+[tool.hatch.version]
+path = "agent_ready/__init__.py"
+pattern = "__version__ = ['\"](?P<version>[^'\"]+)['\"]"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agent_ready"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "agent_ready/test/",
+    "agent_ready/tests/",
+    ".tox",
+    ".venv",
+    "*.db",
+    "*.sqlite3",
+    "__pycache__",
+]
+
+[dependency-groups]
+test = [
+    "wagtail-localize>=1.13",
+    "PyYAML>=6.0",
+]

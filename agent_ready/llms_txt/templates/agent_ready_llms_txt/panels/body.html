@@ -1,0 +1,5 @@
+{% load i18n %}
+{% include "wagtailadmin/panels/field_panel.html" %}
+<button type="submit" name="dump_menu" value="1" class="button button-secondary" data-menu-dump{% if not show_menu_dump %} hidden{% endif %}>
+    {% trans "Insert menu pages" %}
+</button>

@@ -1,0 +1,16 @@
+SEARCHABLE_AI_CRAWLERS = (
+    "Amazonbot",
+    "Applebot-Extended",
+    "Bytespider",
+    "CCBot",
+    "ClaudeBot",
+    "Google-Extended",
+    "GPTBot",
+    "meta-externalagent",
+    "PerplexityBot",
+    "OAI-SearchBot",
+    "Claude-SearchBot",
+    "ChatGPT-User",
+    "Claude-User",
+    "Perplexity-User",
+)

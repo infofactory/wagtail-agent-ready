@@ -1,0 +1,36 @@
+{% extends "wagtailadmin/generic/base.html" %}
+{% load i18n %}
+
+{% block titletag %}{% trans "llms.txt" %}{% endblock %}
+
+{% block header %}
+    {% trans "llms.txt" as title %}
+    {% include "wagtailadmin/shared/header.html" with title=title icon="doc-full" %}
+{% endblock %}
+
+{% block main_content %}
+    {% if site_rows %}
+        <table class="listing">
+            <thead>
+                <tr>
+                    <th>{% trans "Hostname" %}</th>
+                    <th>{% trans "Site name" %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in site_rows %}
+                    <tr>
+                        <td class="title">
+                            <div class="title-wrapper">
+                                <a href="{{ row.url }}">{{ row.site.hostname }}</a>
+                            </div>
+                        </td>
+                        <td>{{ row.site.site_name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>{% trans "No sites configured." %}</p>
+    {% endif %}
+{% endblock %}

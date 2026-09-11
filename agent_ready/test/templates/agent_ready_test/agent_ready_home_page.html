@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ page.title }}</title>
+    {% load agent_ready %}
+    {% agent_ready_head %}
+  </head>
+  <body>
+    <h1>{{ page.title }}</h1>
+    {{ page.body|richtext }}
+  </body>
+</html>
