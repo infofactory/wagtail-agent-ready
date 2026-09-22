@@ -14,8 +14,8 @@ The scanner offers **Content Site**, **API / Application**, and **All Checks** p
 
 **Discoverability**:
 - `robots.txt` (RFC 9309) that points at a sitemap;
-- `sitemap.xml`: RFC 8288
-- `Link` headers to machine-readable resources (`api-catalog`, `service-desc`, `service-doc`, `describedby`);
+- `sitemap.xml`: https://www.sitemaps.org/protocol.html
+- `Link` headers to machine-readable resources (RFC 8288) (`api-catalog`, `service-desc`, `service-doc`, `describedby`);
 - DNS for AI Discovery (DNS-AID)
 
 **Content accessibility**: 
@@ -75,12 +75,12 @@ pip install wagtail-agent-ready
 ```python
 from agent_ready.urls import urlpatterns as agent_ready_urls
 
-urlpatterns += i18n_patterns(
+urlpatterns += [
     # ...
     *agent_ready_urls, # <-- Add this just before wagtail_urls
     path("", include(wagtail_urls)),
     # ...
-)
+]
 ```
 
 3. Mix the mixin into page models that should have a twin:
@@ -94,8 +94,8 @@ class HomePage(AgentReadyMixin, Page):
 ```
 
 4. In the HTML layout template load the agent ready templatetags with`{% load agent_ready %}`
-5. Add the `{% agent_ready_head %}` tag in the HTML layout template's `<head>`.
-5. Add a Markdown twin template next to each opted-in page’s HTML template:
+5. Add the `{% agent_ready_head %}` tag in the HTML layout template's `&lt;head&gt;`.
+6. Add a Markdown twin template next to each opted-in page’s HTML template:
 
 ```
 myapp/templates/myapp/home_page.html  ->  myapp/templates/myapp/home_page.md
@@ -124,7 +124,7 @@ urlpatterns = [
 
 ### robots.txt
 
-There must be a valid `robots.txt` served on the **origin root** so `GET /robots.txt` returns the parsable instructions for crowlers.  
+There must be a valid `robots.txt` served on the **origin root** so `GET /robots.txt` returns the parsable instructions for crawlers.  
 Inside the `robots.txt` there should be a reference to the sitemap full path, and there should be [AI Content Signals](https://contentsignals.org/) as well.
 
 You can serve it as a static view or a txt django template.
@@ -167,7 +167,7 @@ When `GET /sitemap.xml` is a mounted URL, the `robots.txt` automatically adverti
 
 ## llms.txt
 
-While it's not directly required by the Cloudflare agent-ready tests, it is useful to fufill the `describedby` link requirement of the tests.
+While it's not directly required by the Cloudflare agent-ready tests, it is useful to fulfill the `describedby` link requirement of the tests.
 
 Opted-in HTML and markdown responses send `rel="describedby"` pointing at `llms.txt` when that URL is mounted. The covering path is `/{lang}/llms.txt` when the request is language-prefixed and that route exists; otherwise `/llms.txt`. A custom `llms.txt` view is advertised as soon as it resolves.
 
@@ -234,7 +234,7 @@ In Markdown templates:
 
 # {{ page.title|collapse_whitespace|escape_markdown }}
 
-{{ page.body_field|to_markdown }}
+{{ page.body|to_markdown }}
 {% markdown_block page.body %}
 [{{ other.title|collapse_whitespace|escape_markdown }}]({{ other|to_markdown_url }})
 {% markdown_image photo fill-600x338 %}
