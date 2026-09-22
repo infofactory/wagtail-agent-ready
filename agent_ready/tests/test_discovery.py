@@ -1,9 +1,10 @@
 from django.template import Context, RequestContext, Template
 from django.test import RequestFactory, override_settings
 from wagtail.models import Locale, Page, Site
+from wagtail.views import serve as wagtail_serve
 
 from agent_ready.llms_txt.models import LlmsTxt
-from agent_ready.test.models import AgentReadyHomePage
+from agent_ready.test.models import AgentReadyHomePage, AgentReadyPage
 from agent_ready.tests.base import AgentReadySiteTestCase, has_link
 
 
@@ -97,7 +98,7 @@ class DiscoveryTests(AgentReadySiteTestCase):
         self.create_document()
         request = RequestFactory().get("/about/")
         request.META["HTTP_HOST"] = "localhost"
-        response = self.page.serve(request)
+        response = wagtail_serve(request, "about")
         self.assertTrue(has_link(response, "describedby", url_contains="/llms.txt"))
         self.assertFalse(has_link(response, "describedby", url_contains="/en/llms.txt"))
 
@@ -124,7 +125,7 @@ class DiscoveryTests(AgentReadySiteTestCase):
             head = self.render_head()
             unprefixed = RequestFactory().get("/about/")
             unprefixed.META["HTTP_HOST"] = "localhost"
-            served = self.page.serve(unprefixed)
+            served = wagtail_serve(unprefixed, "about")
         self.assertTrue(has_link(html, "describedby", url_contains="/llms.txt"))
         self.assertFalse(has_link(html, "describedby", url_contains="/en/llms.txt"))
         self.assertTrue(has_link(markdown, "describedby", url_contains="/llms.txt"))
@@ -166,7 +167,7 @@ class DiscoveryTests(AgentReadySiteTestCase):
         self.create_document(locale=italian, title="   ")
         request = RequestFactory().get("/it/about/")
         request.META["HTTP_HOST"] = "localhost"
-        response = self.page.serve(request)
+        response = wagtail_serve(request, "about")
         self.assertTrue(has_link(response, "describedby", url_contains="/it/llms.txt"))
         head = self.render_head(path="/it/about/", http_host="localhost")
         self.assertIn('rel="describedby"', head)
@@ -175,10 +176,12 @@ class DiscoveryTests(AgentReadySiteTestCase):
     @override_settings(ALLOWED_HOSTS=MULTI_HOSTS)
     def test_describedby_is_omitted_on_a_host_without_a_ready_document(self):
         self.create_document(title="Default host")
-        self.add_site(OTHER_HOST)
-        request = RequestFactory().get("/en/about/")
-        request.META["HTTP_HOST"] = OTHER_HOST
-        response = self.page.serve(request)
+        other = self.add_site(OTHER_HOST)
+        about = AgentReadyPage(title="Other about", slug="about")
+        other.root_page.add_child(instance=about)
+        about.save_revision().publish()
+        response = self.client.get("/en/about/", HTTP_HOST=OTHER_HOST)
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(has_link(response, "describedby"))
         head = self.render_head(http_host=OTHER_HOST)
         self.assertNotIn("describedby", head)

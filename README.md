@@ -58,7 +58,7 @@ After those pieces are live, scan the origin on [isitagentready.com](https://isi
 
 - Python ≥ 3.10
 - Django ≥ 5.2, < 6.2
-- Wagtail ≥ 6.3
+- Wagtail ≥ 6.4
 
 
 ## Guide to make your site Agent Ready
@@ -90,6 +90,16 @@ from agent_ready.mixins import AgentReadyMixin
 
 
 class HomePage(AgentReadyMixin, Page):
+    pass
+```
+
+`Accept` negotiation, `Link` headers, and `.md` URLs run from Wagtail’s `on_serve_page` hook, not from `AgentReadyMixin.serve()`. Another mixin can define `serve()` and come first in the MRO. Put `RoutablePageMixin` (or any other serving mixin) before `AgentReadyMixin`:
+
+```python
+from wagtail.contrib.routable_page.models import RoutablePageMixin
+
+
+class EventPage(RoutablePageMixin, AgentReadyMixin, Page):
     pass
 ```
 
@@ -272,6 +282,7 @@ def serialize_person(block, value, context):
 
 ```
 agent_ready/
+  wagtail_hooks.py           on_serve_page: Accept, Link, .md
   mixins.py                  AgentReadyMixin
   views.py                   serve_markdown
   urls.py                    .md urlpattern

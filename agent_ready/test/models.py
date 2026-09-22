@@ -1,9 +1,17 @@
+from django.http import HttpResponse
 from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.fields import RichTextField, StreamField
 from wagtail.models import Page
 
 from agent_ready.mixins import AgentReadyMixin
+
+
+class BlockingServeMixin:
+    """Wins MRO and does not call super().serve()."""
+
+    def serve(self, request, *args, **kwargs):
+        return HttpResponse("<h1>Blocked</h1>", content_type="text/html")
 
 
 class AgentReadyHomePage(AgentReadyMixin, Page):
@@ -50,6 +58,12 @@ class AgentPage(AgentReadyMixin, Page):
 
     serve_html = False
     template = "agent_ready_test/markdown_only_page.html"
+
+
+class ShadowedPage(BlockingServeMixin, AgentReadyMixin, Page):
+    """Agent-ready page whose other mixin shadows Page.serve()."""
+
+    template = "agent_ready_test/shadowed_page.html"
 
 
 class MarkdownOnlyPage(AgentReadyMixin, Page):

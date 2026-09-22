@@ -107,16 +107,27 @@ class AgentReadyMixin:
             add_noindex(response)
         return response
 
-    def serve(self, request, *args, **kwargs):
+
+def on_serve_agent_ready(next_serve_page):
+    """Negotiate markdown around ``page.serve()``, independent of mixin MRO."""
+
+    def wrapper(page, request, args, kwargs):
         from agent_ready.markdown.urls import markdown_path_for
 
+        specific = page.specific if hasattr(page, "specific") else page
+        if not isinstance(specific, AgentReadyMixin):
+            return next_serve_page(page, request, args, kwargs)
+
+        serve_args = args or ()
+        serve_kwargs = kwargs or {}
         if getattr(request, "agent_ready_markdown", False) or prefers_markdown(request):
-            return self.serve_markdown(request, *args, **kwargs)
-        if not self.serve_html:
+            return specific.serve_markdown(request, *serve_args, **serve_kwargs)
+        if not specific.serve_html:
             raise Http404
-        response = super().serve(request, *args, **kwargs)
+
+        response = next_serve_page(page, request, args, kwargs)
         links = []
-        markdown_path = markdown_path_for(self, request)
+        markdown_path = markdown_path_for(specific, request)
         if markdown_path:
             links.append(
                 format_link(
@@ -132,3 +143,5 @@ class AgentReadyMixin:
             append_link_header(response, *links)
         add_vary_accept(response)
         return response
+
+    return wrapper
