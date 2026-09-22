@@ -57,7 +57,7 @@ After those pieces are live, scan the origin on [isitagentready.com](https://isi
 ## Requirements
 
 - Python ≥ 3.10
-- Django ≥ 5.2, < 6.1
+- Django ≥ 5.2, < 6.2
 - Wagtail ≥ 6.3
 
 
