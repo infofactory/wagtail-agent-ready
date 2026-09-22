@@ -32,8 +32,9 @@ except ImportError:  # pragma: no cover
     TableBlock = None
 
 try:
-    from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
+    from wagtail.contrib.typed_table_block.blocks import TypedTable, TypedTableBlock
 except ImportError:  # pragma: no cover
+    TypedTable = None
     TypedTableBlock = None
 
 
@@ -392,6 +393,8 @@ def serialize_plain(value, context=None):
         return serialize(value.list_block, value, context)
     if isinstance(value, StructValue):
         return serialize(value.block, value, context)
+    if TypedTable is not None and isinstance(value, TypedTable):
+        return _serialize_typed_table(None, value, context)
     if isinstance(value, RichText):
         return mark_markdown_safe(richtext_to_markdown(value, request=request))
     image_model = _image_model()

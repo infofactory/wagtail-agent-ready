@@ -405,6 +405,28 @@ class TableSerializerTests(AgentReadySiteTestCase):
             "Cast\n\n| Name \\* |\n| --- |\n| Ada \\* |",
         )
 
+    def test_typed_table_value_serializes_without_the_parent_block(self):
+        from django.template import Context, Template
+        from wagtail.contrib.typed_table_block.blocks import TypedTableBlock
+
+        from agent_ready.markdown.serializers import serialize_plain
+
+        block = TypedTableBlock([("text", blocks.CharBlock())])
+        value = block.to_python(
+            {
+                "columns": [{"type": "text", "heading": "Name *"}],
+                "rows": [{"values": ["Ada *"]}],
+                "caption": "Cast",
+            }
+        )
+        expected = "Cast\n\n| Name \\* |\n| --- |\n| Ada \\* |"
+        self.assertEqual(serialize_plain(value), expected)
+        rendered = Template("{% load agent_ready %}{{ table|to_markdown }}").render(
+            Context({"table": value})
+        )
+        self.assertEqual(rendered, expected)
+        self.assertNotIn("TypedTable", rendered)
+
 
 class BaseChooserBlock(blocks.CharBlock):
     pass
